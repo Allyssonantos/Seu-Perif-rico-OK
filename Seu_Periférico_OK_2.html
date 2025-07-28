@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periferico OK</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            color: #2d3748; /* Dark gray text */
+            display: flex;
+            flex-direction: column; /* Changed to column to stack header, main, footer */
+            justify-content: space-between; /* Distribute space */
+            align-items: center;
+            min-height: 100vh;
+            padding: 0; /* Remove body padding, let container/sections handle it */
+            box-sizing: border-box;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%;
+            background-color: #3182ce; /* Darker blue for navbar */
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow items to wrap on small screens */
+        }
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .navbar-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .navbar-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .navbar-link:hover {
+            color: #e2e8f0; /* Lighter on hover */
+        }
+        @media (max-width: 640px) { /* Adjust navbar for small screens */
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+            }
+            .navbar-links {
+                margin-top: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+            .navbar-link {
+                width: 100%;
+                padding: 0.5rem 0;
+                text-align: center;
+                background-color: rgba(255, 255, 255, 0.1);
+                border-radius: 0.375rem;
+            }
+        }
+
+        .main-content {
+            flex-grow: 1; /* Allows main content to take available space */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 1rem; /* Padding for the main content area */
+            box-sizing: border-box;
+        }
+        @media (min-width: 640px) {
+            .main-content {
+                padding: 2rem;
+            }
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 1rem; /* More rounded corners */
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 15px -5px rgba(0, 0, 0, 0.04); /* Softer shadow */
+            padding: 1.5rem; /* Reduced padding for small screens */
+            max-width: 1200px; /* Wider container for virtual keyboard */
+            width: 100%;
+            display: grid;
+            gap: 1.5rem; /* Space between sections */
+            grid-template-columns: 1fr; /* Single column on small screens */
+        }
+        @media (min-width: 768px) { /* Tailwind's md breakpoint */
+            .container {
+                padding: 2.5rem;
+                grid-template-columns: 1fr 1fr; /* Two columns on medium screens and up */
+                gap: 2rem;
+            }
+        }
+        /* No change for lg breakpoint, 1fr 1fr is good */
+
+        .section-card {
+            background-color: #f7fafc; /* Lighter background for cards */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0; /* Subtle border */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .section-title {
+            color: #1a202c; /* Darker title */
+            font-weight: 700; /* Bold */
+            margin-bottom: 1rem;
+            text-align: center;
+            width: 100%;
+            font-size: 1.5rem; /* Default for small screens */
+        }
+        @media (min-width: 640px) {
+            .section-title {
+                font-size: 1.875rem; /* sm:text-2xl */
+            }
+        }
+
+        .output-box {
+            background-color: #e2e8f0; /* Light gray for output */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            min-height: 80px; /* Ensure visibility even when empty */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem; /* Default for small screens */
+            font-weight: 600;
+            text-align: center;
+            word-break: break-all; /* Break long words */
+            width: 100%;
+        }
+        @media (min-width: 640px) {
+            .output-box {
+                font-size: 1.125rem; /* sm:text-lg */
+            }
+        }
+
+        .instructions {
+            font-size: 0.875rem; /* Default for small screens */
+            color: #4a5568; /* Medium gray for instructions */
+            margin-top: 0.75rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+        @media (min-width: 640px) {
+            .instructions {
+                font-size: 0.95rem; /* sm:text-base */
+            }
+        }
+
+        .reset-button {
+            background-color: #4299e1; /* Blue button */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            margin-top: 1.5rem;
+            width: 100%; /* Full width button */
+            cursor: pointer;
+            font-size: 0.9rem; /* Default for small screens */
+        }
+        .reset-button:hover {
+            background-color: #3182ce; /* Darker blue on hover */
+        }
+        @media (min-width: 640px) {
+            .reset-button {
+                font-size: 1rem; /* sm:text-base */
+            }
+        }
+
+        /* Virtual Mouse Click Visualizer */
+        .mouse-click-visualizer {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #ef4444; /* Red color */
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0);
+            animation: click-effect 0.5s ease-out forwards;
+            pointer-events: none; /* Allow clicks to pass through */
+            z-index: 1000;
+        }
+
+        @keyframes click-effect {
+            0% {
+                opacity: 1;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        /* Virtual Keyboard Styling */
+        .virtual-keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem; /* Smaller gap between rows */
+            margin-top: 1.5rem;
+            width: 100%;
+            max-width: 700px; /* Limit keyboard width */
+            background-color: #cbd5e0; /* Light gray background for keyboard */
+            padding: 0.75rem; /* Reduced padding for keyboard */
+            border-radius: 0.75rem;
+        }
+        @media (min-width: 640px) {
+            .virtual-keyboard {
+                gap: 0.5rem; /* Larger gap on larger screens */
+                padding: 1rem;
+            }
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 0.15rem; /* Even smaller gap between keys */
+            justify-content: center;
+        }
+        @media (min-width: 640px) {
+            .keyboard-row {
+                gap: 0.25rem; /* Larger gap on larger screens */
+            }
+        }
+
+        .key {
+            background-color: #ffffff;
+            border: 1px solid #a0aec0;
+            border-radius: 0.375rem; /* Slightly rounded keys */
+            padding: 0.25rem 0.35rem; /* Reduced padding for keys */
+            min-width: 25px; /* Smaller min-width for very small screens */
+            height: 35px; /* Smaller fixed height for keys */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem; /* Smaller font size for keys */
+            font-weight: 500;
+            cursor: default; /* Not clickable directly */
+            transition: background-color 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for keys */
+            flex-grow: 1; /* Allow keys to grow */
+        }
+        @media (min-width: 480px) { /* Custom breakpoint for key sizing */
+            .key {
+                font-size: 0.8rem;
+                height: 40px;
+                padding: 0.4rem 0.6rem;
+            }
+        }
+        @media (min-width: 640px) { /* Tailwind's sm breakpoint */
+            .key {
+                font-size: 0.9rem;
+                height: 45px;
+                padding: 0.5rem 0.75rem;
+            }
+        }
+
+        .key.active-key {
+            background-color: #4299e1; /* Blue when active */
+            color: white;
+            box-shadow: 0 0 8px rgba(66, 153, 225, 0.6); /* Glow effect */
+        }
+
+        /* Proportional flex-grow for special keys instead of fixed flex-basis */
+        .key-tab { flex-grow: 1.5; }
+        .key-caps { flex-grow: 1.7; }
+        .key-shift { flex-grow: 2.2; } /* Both shifts */
+        .key-ctrl, .key-alt, .key-meta { flex-grow: 1.3; }
+        .key-space { flex-grow: 5; } /* Spacebar is much wider */
+        .key-enter { flex-grow: 2; }
+        .key-backspace { flex-grow: 1.8; }
+        .key-slash { flex-grow: 1.2; } /* For the backslash key and forward slash */
+        #key_Slash { flex-grow: 1.2; } /* Ensure forward slash also scales */
+
+        /* Adjustments for very small screens to prevent overflow */
+        @media (max-width: 375px) {
+            .key {
+                font-size: 0.6rem; /* Even smaller font on very narrow screens */
+                height: 30px;
+                padding: 0.15rem 0.25rem;
+            }
+            .keyboard-row {
+                gap: 0.1rem;
+            }
+        }
+
+        /* Virtual Mouse Icon Styling */
+        .virtual-mouse-icon {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            color: #4a5568; /* Color of the SVG icon */
+            width: 60px; /* Size of the mouse icon */
+            height: 60px;
+        }
+
+        /* Footer Styling */
+        .footer {
+            width: 100%;
+            background-color: #2d3748; /* Dark gray for footer */
+            color: #cbd5e0; /* Light gray text */
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            margin-top: 2rem; /* Space above footer */
+        }
+        .footer-section {
+            margin-bottom: 1rem;
+        }
+        .footer-section h3 {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        .footer-section p {
+            line-height: 1.4;
+        }
+        @media (min-width: 768px) {
+            .footer {
+                display: flex;
+                justify-content: space-around;
+                align-items: flex-start;
+                text-align: left;
+            }
+            .footer-section {
+                flex: 1;
+                margin-bottom: 0;
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">Periferico OK</a>
+        <div class="navbar-links">
+            <a href="#" class="navbar-link">Início</a>
+            <a href="#mouseArea" class="navbar-link">Teste de Mouse</a>
+            <a href="#keyboardOutput" class="navbar-link">Teste de Teclado</a>
+            <a href="#about-footer" class="navbar-link">Sobre</a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- Seção de Teste de Mouse -->
+            <div class="section-card" id="mouseArea">
+                <h2 class="text-2xl section-title">Teste de Mouse</h2>
+                <!-- Virtual Mouse Icon -->
+                <svg class="virtual-mouse-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C8.686 2 6 4.686 6 8v8c0 3.314 2.686 6 6 6s6-2.686 6-6V8c0-3.314-2.686-6-6-6zm0 2c2.206 0 4 1.794 4 4v2H8V8c0-2.206 1.794-4 4-4zm-4 8h8v4c0 2.206-1.794 4-4 4s-4-1.794-4-4v-4z"/>
+                </svg>
+                <div id="mouseClickOutput" class="output-box mb-4">Clique com o mouse...</div>
+                <div class="text-lg font-semibold mb-4">Cliques: <span id="mouseClickCount">0</span></div>
+                <div id="mouseMoveOutput" class="output-box">Mova o mouse...</div>
+                <p class="instructions">
+                    Clique com os botões esquerdo, direito ou do meio para ver qual botão foi pressionado e o contador de cliques. Um círculo vermelho aparecerá onde você clicar. Mova o mouse sobre esta área para ver suas coordenadas (X, Y).
+                </p>
+                <button id="resetMouse" class="reset-button">Limpar Mouse e Contador</button>
+            </div>
+
+            <!-- Seção de Teste de Teclado -->
+            <div class="section-card">
+                <h2 class="text-2xl section-title">Teste de Teclado</h2>
+                <div id="keyboardOutput" class="output-box mb-4">Pressione qualquer tecla...</div>
+                <div class="text-lg font-semibold mb-4">Pressionamentos: <span id="keyPressCount">0</span></div>
+                <p class="instructions">
+                    Pressione qualquer tecla no seu teclado para ver o nome da tecla, seu código e o contador de pressionamentos. A tecla correspondente no teclado virtual abaixo será destacada.
+                </p>
+                <button id="resetKeyboard" class="reset-button">Limpar Teclas e Contador</button>
+
+                <!-- Teclado Virtual (Movido para dentro da seção de teclado) -->
+                <div class="virtual-keyboard">
+                    <div class="keyboard-row">
+                        <div id="key_Backquote" class="key">`</div>
+                        <div id="key_Digit1" class="key">1</div>
+                        <div id="key_Digit2" class="key">2</div>
+                        <div id="key_Digit3" class="key">3</div>
+                        <div id="key_Digit4" class="key">4</div>
+                        <div id="key_Digit5" class="key">5</div>
+                        <div id="key_Digit6" class="key">6</div>
+                        <div id="key_Digit7" class="key">7</div>
+                        <div id="key_Digit8" class="key">8</div>
+                        <div id="key_Digit9" class="key">9</div>
+                        <div id="key_Digit0" class="key">0</div>
+                        <div id="key_Minus" class="key">-</div>
+                        <div id="key_Equal" class="key">=</div>
+                        <div id="key_Backspace" class="key key-backspace">Backspace</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div id="key_Tab" class="key key-tab">Tab</div>
+                        <div id="key_KeyQ" class="key">Q</div>
+                        <div id="key_KeyW" class="key">W</div>
+                        <div id="key_KeyE" class="key">E</div>
+                        <div id="key_KeyR" class="key">R</div>
+                        <div id="key_KeyT" class="key">T</div>
+                        <div id="key_KeyY" class="key">Y</div>
+                        <div id="key_KeyU" class="key">U</div>
+                        <div id="key_KeyI" class="key">I</div>
+                        <div id="key_KeyO" class="key">O</div>
+                        <div id="key_KeyP" class="key">P</div>
+                        <div id="key_BracketLeft" class="key">[</div>
+                        <div id="key_BracketRight" class="key">]</div>
+                        <div id="key_Backslash" class="key">\</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div id="key_CapsLock" class="key key-caps">Caps Lock</div>
+                        <div id="key_KeyA" class="key">A</div>
+                        <div id="key_KeyS" class="key">S</div>
+                        <div id="key_KeyD" class="key">D</div>
+                        <div id="key_KeyF" class="key">F</div>
+                        <div id="key_KeyG" class="key">G</div>
+                        <div id="key_KeyH" class="key">H</div>
+                        <div id="key_KeyJ" class="key">J</div>
+                        <div id="key_KeyK" class="key">K</div>
+                        <div id="key_KeyL" class="key">L</div>
+                        <div id="key_Semicolon" class="key">;</div>
+                        <div id="key_Quote" class="key">'</div>
+                        <div id="key_Enter" class="key key-enter">Enter</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div id="key_ShiftLeft" class="key key-shift">Shift</div>
+                        <div id="key_KeyZ" class="key">Z</div>
+                        <div id="key_KeyX" class="key">X</div>
+                        <div id="key_KeyC" class="key">C</div>
+                        <div id="key_KeyV" class="key">V</div>
+                        <div id="key_KeyB" class="key">B</div>
+                        <div id="key_KeyN" class="key">N</div>
+                        <div id="key_KeyM" class="key">M</div>
+                        <div id="key_Comma" class="key">,</div>
+                        <div id="key_Period" class="key">.</div>
+                        <div id="key_Slash" class="key key-slash">/</div>
+                        <div id="key_ShiftRight" class="key key-shift">Shift</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div id="key_ControlLeft" class="key key-ctrl">Ctrl</div>
+                        <div id="key_MetaLeft" class="key key-meta">Win</div>
+                        <div id="key_AltLeft" class="key key-alt">Alt</div>
+                        <div id="key_Space" class="key key-space">Espaço</div>
+                        <div id="key_AltRight" class="key key-alt">Alt Gr</div>
+                        <div id="key_MetaRight" class="key key-meta">Win</div>
+                        <div id="key_ControlRight" class="key key-ctrl">Ctrl</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="about-footer">
+        <div class="footer-section">
+            <h3>Sobre o Site</h3>
+            <p>
+                Este é um site simples e eficaz para testar a funcionalidade básica do seu mouse e teclado. Ele oferece feedback visual e contadores para ajudá-lo a verificar se seus dispositivos de entrada estão funcionando corretamente.
+            </p>
+        </div>
+        <div class="footer-section">
+            <h3>Contato</h3>
+            <p>Em caso de dúvidas ou sugestões, entre em contato.</p>
+            <p>Email: contato@exemplo.com</p>
+        </div>
+        <div class="footer-section">
+            <h3>&copy; 2023 Periferico OK. Todos os direitos reservados.</h3>
+        </div>
+    </footer>
+
+    <script>
+        // Variáveis para elementos de saída
+        const keyboardOutput = document.getElementById('keyboardOutput');
+        const keyPressCountDisplay = document.getElementById('keyPressCount');
+        const mouseClickOutput = document.getElementById('mouseClickOutput');
+        const mouseClickCountDisplay = document.getElementById('mouseClickCount');
+        const mouseMoveOutput = document.getElementById('mouseMoveOutput');
+        const mouseArea = document.getElementById('mouseArea');
+
+        // Resetar botões
+        const resetKeyboardBtn = document.getElementById('resetKeyboard');
+        const resetMouseBtn = document.getElementById('resetMouse');
+
+        // Contadores
+        let keyPressCount = 0;
+        let mouseClickCount = 0;
+
+        // --- Teste de Teclado ---
+        document.addEventListener('keydown', (event) => {
+            // Exibe a tecla e o código da tecla pressionada
+            keyboardOutput.textContent = `Tecla: '${event.key}' | Código: '${event.code}'`;
+
+            // Incrementa e atualiza o contador de pressionamentos de tecla
+            keyPressCount++;
+            keyPressCountDisplay.textContent = keyPressCount;
+
+            // Destaca a tecla no teclado virtual
+            const virtualKey = document.getElementById(`key_${event.code}`);
+            if (virtualKey) {
+                virtualKey.classList.add('active-key');
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            // Remove o destaque da tecla no teclado virtual
+            const virtualKey = document.getElementById(`key_${event.code}`);
+            if (virtualKey) {
+                virtualKey.classList.remove('active-key');
+            }
+        });
+
+        resetKeyboardBtn.addEventListener('click', () => {
+            keyboardOutput.textContent = 'Pressione qualquer tecla...';
+            keyPressCount = 0;
+            keyPressCountDisplay.textContent = keyPressCount;
+            // Remove active state from all keys
+            document.querySelectorAll('.key.active-key').forEach(key => {
+                key.classList.remove('active-key');
+            });
+        });
+
+        // --- Teste de Mouse ---
+        mouseArea.addEventListener('mousedown', (event) => {
+            let buttonName = '';
+            switch (event.button) {
+                case 0:
+                    buttonName = 'Botão Esquerdo';
+                    break;
+                case 1:
+                    buttonName = 'Botão do Meio (Scroll)';
+                    break;
+                case 2:
+                    buttonName = 'Botão Direito';
+                    break;
+                default:
+                    buttonName = `Botão ${event.button}`;
+            }
+            mouseClickOutput.textContent = `Clique: ${buttonName}`;
+
+            // Incrementa e atualiza o contador de cliques do mouse
+            mouseClickCount++;
+            mouseClickCountDisplay.textContent = mouseClickCount;
+
+            // Adiciona o visualizador de clique do mouse
+            const clickVisualizer = document.createElement('div');
+            clickVisualizer.classList.add('mouse-click-visualizer');
+            // Posição ajustada para o centro do círculo
+            clickVisualizer.style.left = `${event.clientX - 15}px`;
+            clickVisualizer.style.top = `${event.clientY - 15}px`;
+            document.body.appendChild(clickVisualizer);
+
+            // Remove o visualizador após a animação
+            clickVisualizer.addEventListener('animationend', () => {
+                clickVisualizer.remove();
+            });
+        });
+
+        mouseArea.addEventListener('mousemove', (event) => {
+            // Exibe as coordenadas X e Y do mouse em relação à janela do navegador
+            mouseMoveOutput.textContent = `Mouse X: ${event.clientX} | Mouse Y: ${event.clientY}`;
+        });
+
+        resetMouseBtn.addEventListener('click', () => {
+            mouseClickOutput.textContent = 'Clique com o mouse...';
+            mouseClickCount = 0;
+            mouseClickCountDisplay.textContent = mouseClickCount;
+            mouseMoveOutput.textContent = 'Mova o mouse...';
+        });
+
+        // Previne o menu de contexto do botão direito do mouse para não atrapalhar o teste
+        mouseArea.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+        });
+
+        // Inicializa o conteúdo ao carregar a página
+        window.onload = () => {
+            keyboardOutput.textContent = 'Pressione qualquer tecla...';
+            keyPressCountDisplay.textContent = keyPressCount;
+            mouseClickOutput.textContent = 'Clique com o mouse...';
+            mouseClickCountDisplay.textContent = mouseClickCount;
+            mouseMoveOutput.textContent = 'Mova o mouse...';
+        };
+    </script>
+</body>
+</html>
